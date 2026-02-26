@@ -1,92 +1,72 @@
+import com.diffplug.gradle.spotless.SpotlessExtension
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.plugins.quality.CheckstyleExtension
+import org.gradle.api.tasks.testing.Test
+
 plugins {
-    java
-    id("org.springframework.boot") version "4.0.3"
-    id("io.spring.dependency-management") version "1.1.7"
-    id("com.diffplug.spotless") version "6.25.0"
-    id("checkstyle")
-    id("com.github.spotbugs") version "6.0.25"
+    id("org.springframework.boot") version "4.0.3" apply false
+    id("io.spring.dependency-management") version "1.1.7" apply false
+    id("com.diffplug.spotless") version "6.25.0" apply false
 }
 
 group = "com.gayeon"
 version = "0.0.1-SNAPSHOT"
 description = "memo"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+allprojects {
+    repositories { mavenCentral() }
 }
 
-repositories {
-    mavenCentral()
-}
+subprojects {
+    // core plugins
+    pluginManager.apply("java")
+    pluginManager.apply("checkstyle")
+    pluginManager.apply("com.diffplug.spotless")
 
-dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    // SpotBugs annotations (optional but useful)
-    compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
-}
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
-// ---------- Spotless (format) ----------
-spotless {
-    java {
-        eclipse().configFile("config/formatter/eclipse-default-style-formatter.xml")
-        // Remove unused imports + normalize style
-        removeUnusedImports()
-        importOrder() // default order; customize if you want
-        trimTrailingWhitespace()
-        endWithNewline()
-        // You can also target specific source sets if needed
-    }
-    format("misc") {
-        target("*.md", ".gitignore", ".gitattributes", "**/*.yml", "**/*.yaml")
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
-}
-
-// ---------- Checkstyle (style rules) ----------
-checkstyle {
-    toolVersion = "10.17.0"
-    isIgnoreFailures = false
-    // config file path below
-    configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
-}
-
-// Make checkstyle apply to main/test
-tasks.withType<Checkstyle> {
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-}
-
-// ---------- SpotBugs (bug patterns) ----------
-spotbugs {
-    toolVersion.set("4.8.6")
-    ignoreFailures.set(false)
-}
-
-tasks.withType<com.github.spotbugs.snom.SpotBugsTask> {
-    reports {
-        // HTML is easiest to read in CI artifacts
-        create("html") {
-            required.set(true)
-            outputLocation.set(layout.buildDirectory.file("reports/spotbugs/${name}.html"))
-        }
-        create("xml") {
-            required.set(false)
+    // ----- Java toolchain -----
+    extensions.configure<JavaPluginExtension> {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
-}
 
-// ---------- One command quality gate ----------
-tasks.named("check") {
-    dependsOn("spotlessCheck")
+    // ----- Tests -----
+    tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
+    }
+
+    // ----- Spotless -----
+    extensions.configure<SpotlessExtension> {
+        java {
+            eclipse().configFile("$rootDir/config/formatter/eclipse-default-style-formatter.xml")
+            removeUnusedImports()
+            importOrder()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+        format("misc") {
+            target("*.md", ".gitignore", ".gitattributes", "**/*.yml", "**/*.yaml")
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+    }
+
+    // ----- Checkstyle -----
+    extensions.configure<CheckstyleExtension> {
+        toolVersion = "10.17.0"
+        isIgnoreFailures = false
+        configFile = file("$rootDir/config/checkstyle/checkstyle.xml")
+    }
+
+    tasks.withType<Checkstyle>().configureEach {
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+    }
+
+    // ----- Quality gate -----
+    tasks.named("check") {
+        dependsOn("spotlessCheck")
+    }
 }
