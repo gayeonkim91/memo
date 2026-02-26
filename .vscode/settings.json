@@ -1,0 +1,3 @@
+{
+    "java.format.settings.url": "${workspaceFolder}/config/formatter/eclipse-default-style-formatter.xml"
+}

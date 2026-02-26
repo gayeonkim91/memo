@@ -4,6 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+gradle.properties
 
 ### STS ###
 .apt_generated
@@ -34,4 +35,58 @@ out/
 /.nb-gradle/
 
 ### VS Code ###
-.vscode/
+.vscode/*
+!.vscode/
+!.vscode/settings.json
+.history/
+
+### OS Files ###
+.DS_Store
+Thumbs.db
+
+## Java Build Files ###
+**/target/
+**/*.class
+**/*.log
+
+### Spring Runtime Files ###
+**/logs/
+**/*.pid
+
+### Environment / Secrets Files ###
+.env
+.env.*
+!.env.example
+
+### Docker Files ###
+docker-compose.override.yml
+**/.docker/
+**/docker-data/
+**/data/
+**/volumes/
+
+### AI Tools / LLM / Assistants Files ###
+.claude/
+.ai/
+.cursor/
+.copilot/
+.codeium/
+.chatgpt/
+.openai/
+.llm/
+
+### Backup / Temporary Files ###
+*.bak
+*.tmp
+*.backup
+*.old
+*~
+*.swp
+*.swo
+
+### Test / Coverage Files ###
+**/surefire-reports/
+**/failsafe-reports/
+**/jacoco/
+**/coverage/
+*.exec
