@@ -4,7 +4,7 @@ import org.gradle.api.plugins.quality.CheckstyleExtension
 import org.gradle.api.tasks.testing.Test
 
 plugins {
-    id("org.springframework.boot") version "4.0.3" apply false
+    id("org.springframework.boot") version "3.5.7" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
     id("com.diffplug.spotless") version "6.25.0" apply false
 }
