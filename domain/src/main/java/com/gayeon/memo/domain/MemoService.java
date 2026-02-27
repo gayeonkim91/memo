@@ -31,4 +31,11 @@ public class MemoService {
             return memoRepository.save(memo);
         });
     }
+
+    public boolean delete(Long id) {
+        return memoRepository.findById(id).map(memo -> {
+            memoRepository.delete(memo);
+            return true;
+        }).orElse(false);
+    }
 }

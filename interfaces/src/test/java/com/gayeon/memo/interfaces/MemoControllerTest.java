@@ -1,6 +1,7 @@
 package com.gayeon.memo.interfaces;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -85,5 +86,22 @@ class MemoControllerTest {
         Memo savedMemo = memoRepository.save(new Memo("before"));
 
         mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"   \"}")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deleteMemoReturns204AndDeletesMemoWhenIdExists() throws Exception {
+        Memo savedMemo = memoRepository.save(new Memo("to delete"));
+
+        mockMvc().perform(delete("/memo/" + savedMemo.getId())).andExpect(status().isNoContent());
+
+        assertThat(memoRepository.findById(savedMemo.getId())).isEmpty();
+    }
+
+    @Test
+    void deleteMemoReturns404WhenIdDoesNotExist() throws Exception {
+        Memo savedMemo = memoRepository.save(new Memo("existing memo"));
+        Long missingId = savedMemo.getId() + 999999L;
+
+        mockMvc().perform(delete("/memo/" + missingId)).andExpect(status().isNotFound());
     }
 }
