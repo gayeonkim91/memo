@@ -1,5 +1,6 @@
 package com.gayeon.memo.domain;
 
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,5 +14,9 @@ public class MemoService {
 
     public Memo create(String text) {
         return memoRepository.save(new Memo(text));
+    }
+
+    public Optional<Memo> getById(Long id) {
+        return memoRepository.findById(id);
     }
 }
