@@ -30,4 +30,8 @@ public class Memo {
     public String getText() {
         return text;
     }
+
+    public void updateText(String text) {
+        this.text = text;
+    }
 }

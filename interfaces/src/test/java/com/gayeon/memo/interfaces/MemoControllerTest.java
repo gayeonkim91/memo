@@ -1,7 +1,9 @@
 package com.gayeon.memo.interfaces;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,5 +63,27 @@ class MemoControllerTest {
     void getMemosReturns200WithEmptyListWhenNoMemoExists() throws Exception {
         memoRepository.deleteAll();
         mockMvc().perform(get("/memos")).andExpect(status().isOk()).andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void updateMemoReturns200AndUpdatesTextWhenIdExists() throws Exception {
+        Memo savedMemo = memoRepository.save(new Memo("before"));
+
+        mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"after\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(savedMemo.getId())).andExpect(jsonPath("$.text").value("after"));
+
+        Memo updatedMemo = memoRepository.findById(savedMemo.getId()).orElseThrow();
+        assertThat(updatedMemo.getText()).isEqualTo("after");
+    }
+
+    @Test
+    void updateMemoReturns404WhenIdDoesNotExist() throws Exception {
+        mockMvc().perform(put("/memo/999999").contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"after\"}")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateMemoReturns400WhenTextIsBlank() throws Exception {
+        Memo savedMemo = memoRepository.save(new Memo("before"));
+
+        mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"   \"}")).andExpect(status().isBadRequest());
     }
 }

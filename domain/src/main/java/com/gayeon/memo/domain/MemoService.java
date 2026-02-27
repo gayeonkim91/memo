@@ -24,4 +24,11 @@ public class MemoService {
     public List<Memo> getAll() {
         return memoRepository.findAllByOrderByIdDesc();
     }
+
+    public Optional<Memo> update(Long id, String text) {
+        return memoRepository.findById(id).map(memo -> {
+            memo.updateText(text);
+            return memoRepository.save(memo);
+        });
+    }
 }
