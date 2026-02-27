@@ -2,6 +2,7 @@ package com.gayeon.memo.interfaces;
 
 import com.gayeon.memo.domain.Memo;
 import com.gayeon.memo.domain.MemoService;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,5 +35,11 @@ public class MemoController {
     @GetMapping("/memo/{id}")
     public ResponseEntity<MemoResponse> getById(@PathVariable Long id) {
         return memoService.getById(id).map(memo -> ResponseEntity.ok(new MemoResponse(memo.getId(), memo.getText()))).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/memos")
+    public ResponseEntity<List<MemoResponse>> getAll() {
+        List<MemoResponse> response = memoService.getAll().stream().map(memo -> new MemoResponse(memo.getId(), memo.getText())).toList();
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,5 +1,6 @@
 package com.gayeon.memo.domain;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,9 @@ public class MemoService {
 
     public Optional<Memo> getById(Long id) {
         return memoRepository.findById(id);
+    }
+
+    public List<Memo> getAll() {
+        return memoRepository.findAllByOrderByIdDesc();
     }
 }
