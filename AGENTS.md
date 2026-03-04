@@ -3,7 +3,7 @@
 ## 우선순위
 1) docs/plans/<작업>.md (plan)
 2) 이 파일(AGENTS.md)
-3) docs/agent/skills.md
+3) docs/agent/playbook.md
 4) docs/agent/AGENTS.details.md (plan에서 명시된 경우에만)
 
 ## 절대 규칙
@@ -11,11 +11,8 @@
 - plan에 명시되지 않으면 동작(behavior)을 바꾸지 않는다.
 - 새 의존성 추가 금지(필요하면 plan에 근거와 함께 명시 후 진행).
 
-## TDD 루프 (plan에 "go/시작"이 있을 때)
-- 한 번에 테스트 1개만:
-    1) 테스트 1개 추가/수정 후 실패(Red) 확인
-    2) 최소 구현으로 통과(Green)
-    3) 통과 후에만 리팩토링(Refactor)
+## 진행 규율(최소)
+- plan에 "go/시작"이 있으면: 테스트 1개 단위로 Red → Green → Refactor.
 
 ## 품질 게이트(필수)
 - `./gradlew spotlessApply`
