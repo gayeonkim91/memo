@@ -15,6 +15,6 @@
 - domain: Entity/Repository/Service
 - domain은 interfaces에 의존하지 않는다.
 
-## 레시피: GET 테스트용 Seed
+## 레시피: 저장된 데이터 테스트용 Seed
 - 테스트 데이터는 `MemoRepository.save(...)`로 준비한다.
 - 테스트 편의를 위한 seed 엔드포인트/배치/CLI는 만들지 않는다.
