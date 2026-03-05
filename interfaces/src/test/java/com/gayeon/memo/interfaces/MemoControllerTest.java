@@ -42,12 +42,6 @@ class MemoControllerTest {
     }
 
     @Test
-    void createMemoReturns400WhenTextExceeds500Characters() throws Exception {
-        String tooLongText = "a".repeat(501);
-        mockMvc().perform(post("/memo").contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"" + tooLongText + "\"}")).andExpect(status().isBadRequest());
-    }
-
-    @Test
     void getMemoReturns200WhenIdExists() throws Exception {
         Memo savedMemo = memoRepository.save(new Memo("saved memo"));
         mockMvc().perform(get("/memo/" + savedMemo.getId())).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(savedMemo.getId())).andExpect(jsonPath("$.text").value("saved memo"));
@@ -92,14 +86,6 @@ class MemoControllerTest {
         Memo savedMemo = memoRepository.save(new Memo("before"));
 
         mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"   \"}")).andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void updateMemoReturns400WhenTextExceeds500Characters() throws Exception {
-        Memo savedMemo = memoRepository.save(new Memo("before"));
-        String tooLongText = "a".repeat(501);
-
-        mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"" + tooLongText + "\"}")).andExpect(status().isBadRequest());
     }
 
     @Test

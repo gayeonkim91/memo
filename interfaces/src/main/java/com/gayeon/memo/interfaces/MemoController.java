@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MemoController {
 
-    private static final int MAX_MEMO_TEXT_LENGTH = 500;
-
     private final MemoService memoService;
 
     public MemoController(MemoService memoService) {
@@ -65,7 +63,7 @@ public class MemoController {
     }
 
     private boolean isInvalidText(String text) {
-        return text == null || text.isBlank() || text.length() > MAX_MEMO_TEXT_LENGTH;
+        return text == null || text.isBlank();
     }
 
     private MemoResponse toResponse(Memo memo) {
