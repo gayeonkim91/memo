@@ -25,8 +25,8 @@ public class MemoController {
     }
 
     @PostMapping("/memo")
-    public ResponseEntity<MemoResponse> create(@RequestBody MemoCreateRequest request) {
-        String text = request.getText();
+    public ResponseEntity<MemoResponseDto> create(@RequestBody CreateMemoRequestDto request) {
+        String text = request.text();
         if (isInvalidText(text)) {
             return ResponseEntity.badRequest().build();
         }
@@ -36,8 +36,8 @@ public class MemoController {
     }
 
     @PutMapping("/memo/{id}")
-    public ResponseEntity<MemoResponse> update(@PathVariable Long id, @RequestBody MemoCreateRequest request) {
-        String text = request.getText();
+    public ResponseEntity<MemoResponseDto> update(@PathVariable Long id, @RequestBody UpdateMemoRequestDto request) {
+        String text = request.text();
         if (isInvalidText(text)) {
             return ResponseEntity.badRequest().build();
         }
@@ -46,13 +46,13 @@ public class MemoController {
     }
 
     @GetMapping("/memo/{id}")
-    public ResponseEntity<MemoResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<MemoResponseDto> getById(@PathVariable Long id) {
         return memoService.getById(id).map(memo -> ResponseEntity.ok(toResponse(memo))).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/memos")
-    public ResponseEntity<List<MemoResponse>> getAll() {
-        List<MemoResponse> response = memoService.getAll().stream().map(this::toResponse).toList();
+    public ResponseEntity<List<MemoResponseDto>> getAll() {
+        List<MemoResponseDto> response = memoService.getAll().stream().map(this::toResponse).toList();
         return ResponseEntity.ok(response);
     }
 
@@ -68,7 +68,7 @@ public class MemoController {
         return text == null || text.isBlank() || text.length() > MAX_MEMO_TEXT_LENGTH;
     }
 
-    private MemoResponse toResponse(Memo memo) {
-        return new MemoResponse(memo.getId(), memo.getText());
+    private MemoResponseDto toResponse(Memo memo) {
+        return new MemoResponseDto(memo.getId(), memo.getText());
     }
 }

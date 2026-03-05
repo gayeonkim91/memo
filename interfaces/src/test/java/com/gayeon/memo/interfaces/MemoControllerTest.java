@@ -55,8 +55,8 @@ class MemoControllerTest {
         String responseBody = mockMvc().perform(post("/memo").contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"" + text + "\"}")).andExpect(status().isCreated()).andExpect(jsonPath("$.id").isNumber()).andExpect(jsonPath("$.text").value(text)).andReturn().getResponse().getContentAsString();
 
         ObjectMapper mapper = new ObjectMapper();
-        MemoResponse response = mapper.readValue(responseBody, MemoResponse.class);
-        Memo savedMemo = memoRepository.findById(response.getId()).orElseThrow();
+        MemoResponseDto response = mapper.readValue(responseBody, MemoResponseDto.class);
+        Memo savedMemo = memoRepository.findById(response.id()).orElseThrow();
         assertThat(savedMemo.getText()).isEqualTo(text);
     }
 

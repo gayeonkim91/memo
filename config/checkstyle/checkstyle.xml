@@ -23,6 +23,9 @@
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
         <module name="TypeName"/>
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+        </module>
 
         <!-- complexity: start loose -->
         <module name="CyclomaticComplexity">
