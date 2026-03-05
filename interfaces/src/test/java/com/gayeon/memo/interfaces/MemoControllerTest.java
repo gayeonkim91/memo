@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gayeon.memo.domain.Memo;
 import com.gayeon.memo.domain.MemoRepository;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,24 @@ class MemoControllerTest {
     @Test
     void createMemoReturns400WhenTextIsBlank() throws Exception {
         mockMvc().perform(post("/memo").contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"   \"}")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createMemoReturns400WhenTextExceeds2000Characters() throws Exception {
+        String tooLongText = "a".repeat(2001);
+        mockMvc().perform(post("/memo").contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"" + tooLongText + "\"}")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createMemoReturns201WhenTextIsExactly2000Characters() throws Exception {
+        String text = "a".repeat(2000);
+
+        String responseBody = mockMvc().perform(post("/memo").contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"" + text + "\"}")).andExpect(status().isCreated()).andExpect(jsonPath("$.id").isNumber()).andExpect(jsonPath("$.text").value(text)).andReturn().getResponse().getContentAsString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        MemoResponse response = mapper.readValue(responseBody, MemoResponse.class);
+        Memo savedMemo = memoRepository.findById(response.getId()).orElseThrow();
+        assertThat(savedMemo.getText()).isEqualTo(text);
     }
 
     @Test
@@ -86,6 +105,25 @@ class MemoControllerTest {
         Memo savedMemo = memoRepository.save(new Memo("before"));
 
         mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"   \"}")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateMemoReturns400WhenTextExceeds2000Characters() throws Exception {
+        Memo savedMemo = memoRepository.save(new Memo("before"));
+        String tooLongText = "a".repeat(2001);
+
+        mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"" + tooLongText + "\"}")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateMemoReturns200WhenTextIsExactly2000Characters() throws Exception {
+        Memo savedMemo = memoRepository.save(new Memo("before"));
+        String text = "a".repeat(2000);
+
+        mockMvc().perform(put("/memo/" + savedMemo.getId()).contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"" + text + "\"}")).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(savedMemo.getId())).andExpect(jsonPath("$.text").value(text));
+
+        Memo updatedMemo = memoRepository.findById(savedMemo.getId()).orElseThrow();
+        assertThat(updatedMemo.getText()).isEqualTo(text);
     }
 
     @Test

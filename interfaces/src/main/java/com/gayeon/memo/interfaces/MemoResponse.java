@@ -2,8 +2,11 @@ package com.gayeon.memo.interfaces;
 
 public class MemoResponse {
 
-    private final Long id;
-    private final String text;
+    private Long id;
+    private String text;
+
+    public MemoResponse() {
+    }
 
     public MemoResponse(Long id, String text) {
         this.id = id;
@@ -16,5 +19,13 @@ public class MemoResponse {
 
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
